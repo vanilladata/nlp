@@ -1,13 +1,13 @@
 #encoding=utf8
 import jieba
-jieba.load_userdict(r'mydict.txt')
+jieba.load_userdict(r'../mydict.txt')
 jieba.initialize()
 from utile import *
 import os
 import json
 
 stopwords = {} #停用词用dict存储速度会很快，如果用list存储，会很慢
-for word in open('stop_words.txt', 'r'):
+for word in open('../stop_words.txt', 'r'):
     stopwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
 class crfresult:
     @classmethod
@@ -41,7 +41,7 @@ class crfresult:
         os.system(r'"crf_test -m model test.data > output.txt"')#调用windows exe程序
         # os.system("sh /home/hadoop/nlp/crf/exec.sh")#调用linux shell的脚步
         resultjson = self.readresult(u'output.txt')
-        # print resultjson
+        print resultjson
         return resultjson
 
     # 按照CRF的格式把数据写入txt

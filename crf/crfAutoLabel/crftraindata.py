@@ -3,14 +3,13 @@ import xlrd
 import xlwt
 import jieba
 import jieba.posseg as pseg
-jieba.load_userdict(r'mydict.txt')
+jieba.load_userdict(r'../mydict.txt')
 jieba.initialize()
 from utile import *
-import os
 
 #此代码主要是把excel转换成CRF++训练语料的格式
 stopwords = {} #停用词用dict存储速度会很快，如果用list存储，会很慢
-for word in open('stop_words.txt', 'r'):
+for word in open('../stop_words.txt', 'r'):
     stopwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
 
 nounwords = {} #名词字典
@@ -28,7 +27,7 @@ def nasavedict(filename,sheet):
         if rowlist[0] == u'形容词':
             adjectivewords[rowlist[1]] = rowlist[2]
 statwords = {} #副词
-for word in open('stat_d.txt','r'):
+for word in open('../stat_d.txt','r'):
     statwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
 
 #把标注的词存入到dict中
@@ -38,12 +37,11 @@ class crftraindata:
     """此代码主要是把excel转换成CRF++训练语料的格式"""
 
 
-    def __init__(self, filename,sheet,outfile,fragmentation):
-        #filename 为输入的excel文件，sheet为excel中的文档，outfile为输出的txt文件,fragmentation 是否分句
+    def __init__(self, filename,sheet,outfile):
+        #filename 为输入的excel文件，sheet为excel中的文档，outfile为输出的txt文件
         self.filename = filename
         self.sheet = sheet
         self.outfile = outfile
-        self.fragmentation = fragmentation
 
     def readexcel(self):
         # 从excel中读取数据并放入到list中，以便传给函数写到txt中
@@ -199,14 +197,16 @@ class crftraindata:
 
 if __name__ == '__main__':
     # 从原评论中提取出名词和形容词
-    # NounAdjectivesExcel = crftraindata(u"整体评论-联想手机全部.xlsx",u"Sheet1",u'名词形容词.xls',False)
+    # NounAdjectivesExcel = crftraindata(u"整体评论-联想手机全部.xlsx",u"Sheet1",u'名词形容词.xls')
     # NounAdjectivesExcel.generatingNounAdjectivesExcel()
-    # 提取出excel中的名词和形容词
-    # readexcel(u"整体评论-联想手机全部.xlsx",u"Sheet1",u'名词形容词.xls')
 
     # 给文本自动打标注
-    annotatformat = crftraindata(u'整体评论-联想手机训练.xlsx', u'Sheet1', u'结果.xls', False)
-    annotatformat.annotationformat()
+    # annotatformat = crftraindata(u'整体评论-联想手机训练.xlsx', u'Sheet1', u'结果.xls')
+    # annotatformat.annotationformat()
+
+    # 把自动打的标注转换成CRF的格式
+    NounAdjectivesExcel = crftraindata(u"结果.xls", u"Sheet1", u'train.data')
+    NounAdjectivesExcel.readexcel()
 
 
 
