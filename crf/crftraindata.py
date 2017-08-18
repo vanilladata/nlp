@@ -31,15 +31,12 @@ statwords = {} #副词
 for word in open('stat_d.txt','r'):
     statwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
 
-statwords = {} #副词
-for word in open('stat_d.txt','r'):
-    statwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
-
 #把标注的词存入到dict中
 nasavedict(u"名词形容词标注.xlsx",u'Sheet1')
 
 class crftraindata:
     """此代码主要是把excel转换成CRF++训练语料的格式"""
+
 
     def __init__(self, filename,sheet,outfile,fragmentation):
         #filename 为输入的excel文件，sheet为excel中的文档，outfile为输出的txt文件,fragmentation 是否分句
@@ -89,6 +86,7 @@ class crftraindata:
         self.writeCrfTrainData(resultlist,self.outfile)
 
     # 得到的数据写入txt
+    @classmethod
     def writeCrfTrainData(self,resultlists,outfile):
         f = open(outfile, "w")
         for resultlist in resultlists:
@@ -98,24 +96,6 @@ class crftraindata:
             f.write("\n")
 
         f.close()
-
-    def readresult(self,infile):
-        # f = open(infile, "r")
-        # lines = f.readlines()  # 读取全部内容
-        # for line in lines:
-        #         print line.split('\n')
-        resultlists = []
-        wordlist = []
-        for line in open(infile):
-            word = line.replace('\n','')
-            if word != '':
-                words = word.split('\t')
-                wordlist.append(words[0]+','+words[1])
-            else:
-                resultlists.append(wordlist)
-                wordlist = []
-        return resultlists
-
 
     def generatingNounAdjectivesExcel(self):
         # 从excel中读取数据并放入到list中，然后通过分词在把每个评论中的词性为（n和a）的值放入到set集合中
@@ -217,32 +197,6 @@ class crftraindata:
             wbksheet.write(rownum, j + 1, wordlists[j])
             wbksheet.write(rownum + 1, j + 1, tagginglists[j])
 
-    def crftext(self,content,output):
-        subsection = utile()
-        resultlists = subsection.subsection(content.encode("utf-8"))
-        resultlist = []
-        for r in resultlists:
-            seg_list = jieba.cut(r)
-            seg_list_after = []
-            writelist = []
-            # 去掉停用词
-            for seg in seg_list:
-                if stopwords.has_key(seg.encode('utf-8')):
-                    continue
-                else:
-                    seg_list_after.append(seg)
-            for seg in seg_list_after:
-                if (seg.encode("utf-8") not in stopwords and seg != ' ' and seg != '\n' and seg != '\n\n'):
-                    writelist.append(seg)
-            resultlist.append(writelist)
-        self.writeCrfTrainData(resultlist,output)
-        #调用CRF模型得出结果
-        os.system(r'"D:\CRF++-0.58\example\lxltest\crf_test.exe -m D:\CRF++-0.58\example\lxltest\model test.data > output.txt"')
-        resultlists = self.readresult(u'output.txt')
-        for resultlist in resultlists:
-            for i in resultlist:
-                print i
-
 if __name__ == '__main__':
     # 从原评论中提取出名词和形容词
     # NounAdjectivesExcel = crftraindata(u"整体评论-联想手机全部.xlsx",u"Sheet1",u'名词形容词.xls',False)
@@ -251,14 +205,8 @@ if __name__ == '__main__':
     # readexcel(u"整体评论-联想手机全部.xlsx",u"Sheet1",u'名词形容词.xls')
 
     # 给文本自动打标注
-    # annotatformat = crftraindata(u'整体评论test.xlsx', u'Sheet1', u'结果.xls', False)
-    # annotatformat.annotationformat()
-
-    #通过标注好的excel中生成CRF++训练的格式
-    traindata = crftraindata(u"结果.xls", u"Sheet1", 'train.data', False)
-    # traindata.readexcel()
-
-    traindata.crftext(u'就是快递稍微慢点 手机可以 的厚度可以接受,,,,','test.data')
+    annotatformat = crftraindata(u'整体评论-联想手机训练.xlsx', u'Sheet1', u'结果.xls', False)
+    annotatformat.annotationformat()
 
 
 
