@@ -51,8 +51,8 @@ class crfppresult:
                     taglist.append(tagger.x(i,j).decode('utf-8'))
                     wordlist.append(tagger.y2(i))
                     # print tagger.x(i,j).decode('utf-8'), tagger.y2(i)
-            dict["tag"] = taglist
-            dict["word"] = wordlist
+            dict["lables"] = taglist
+            dict["tokens"] = wordlist
             resultlist.append(dict)
             wordlist = []
             taglist = []

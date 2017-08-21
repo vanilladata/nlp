@@ -12,6 +12,7 @@ import cgi
 import io
 import shutil
 import json
+import crfppResult.crfppresult as crfpp
 
 
 class CRFHttpHandler(BaseHTTPRequestHandler):
@@ -129,21 +130,27 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
         return respData
 
     def posttextEmotionTag(self):
-        reqestJsonData = self.requestJsonData
+        respDataList = self.requestJsonData["reqDatas"]
+        # reqestJsonData = self.requestJsonData
         self.inner_logger.info(
             "tag for sentance:[]" % (
-                reqestJsonData))
+                str(respDataList)))
 
-        respData = {"result": True, "respDatas": [
-            {
-                "tokens": ["这个", "冰箱", "很好", "快递", "很", "给力"],
-                "lables": ["BI", "BI", "BI", "BI", "BI", "BI", "BI"]
-            },
-            {
-                "tokens": ["这个", "冰箱", "很好", "快递", "很", "给力"],
-                "lables": ["BI", "BI", "BI", "BI", "BI", "BI", "BI"]
-            }
-        ]}
+        # respData = {"result": True, "respDatas": [
+        #     {
+        #         "tokens": ["这个", "冰箱", "很好", "快递", "很", "给力"],
+        #         "lables": ["BI", "BI", "BI", "BI", "BI", "BI", "BI"]
+        #     },
+        #     {
+        #         "tokens": ["这个", "冰箱", "很好", "快递", "很", "给力"],
+        #         "lables": ["BI", "BI", "BI", "BI", "BI", "BI", "BI"]
+        #     }
+        # ]}
+
+        respData = crfpp.crfpptest(respDataList)
+        self.inner_logger.info(
+            "tag for sentance success. result:[%s]" % (
+                str(respData)))
         return respData
 
     def writeStr(self, str):
