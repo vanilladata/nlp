@@ -43,7 +43,7 @@ class crfresult:
         os.system(r'"crf_test -m model test.data > output.txt"')#调用windows exe程序
         # os.system("sh /home/hadoop/nlp/crf/exec.sh")#调用linux shell的脚步
         resultjson = self.readresult(u'output.txt')
-        print resultjson
+        # print resultjson
         return resultjson
 
     # 按照CRF的格式把数据写入txt

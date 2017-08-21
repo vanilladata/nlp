@@ -44,8 +44,8 @@ class crfppresult:
             tagger.parse()
             size = tagger.size() #行数
             xsize = tagger.xsize()
-            print size
-            print xsize
+            # print size
+            # print xsize
             for i in range(0, size):
                 for j in range(0,xsize):
                     taglist.append(tagger.x(i,j).decode('utf-8'))
