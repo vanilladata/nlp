@@ -52,7 +52,7 @@ class ServerManagerThread(ServerThread):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="")
     parser.add_argument('--logconsole', action='store_true',
                         default=True,
                         help='log all info to console otherwise to file by Specify param'
