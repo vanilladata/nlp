@@ -53,26 +53,32 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="")
-    parser.add_argument('--logconsole', action='store_true',
-                        default=True,
-                        help='log all info to console otherwise to file by Specify param'
-                             ':[logfile] [default:True]')
 
     parser.add_argument('--bind', '-b', default='127.0.0.1', metavar='ADDRESS',
                         help='Specify alternate bind address '
-                             '[default: all interfaces]')
+                             '[default: all interfaces]', dest="bind")
 
-    parser.add_argument('port', action='store',
+    parser.add_argument('--port', "-p", action='store',
                         default=8000, type=int,
-                        nargs='?',
+                        nargs='?', dest="port",
                         help='Specify alternate port [default: 8000]')
 
-    parser.add_argument('logfile', action='store',
-                        default="logcfg/logfile.conf", type=str,
+    parser.add_argument('--filelog', action='store_true',
+                        default=False,
+                        help='log all info to console otherwise to file by Specify param'
+                             ':[logfile] [default:True]')
+
+    parser.add_argument('--logcfg', "-l", action='store',
+                        default="logcfg/logfile.conf", type=str, dest="logcfg",
                         nargs='?',
                         help='Specify log config fileName[default: logcfg/logfile.conf]')
-    args = parser.parse_args()
-
+    # parser.add_argument('logfile', action='store',
+    #                     default="logcfg/logfile.conf", type=str,
+    #                     nargs='?',
+    #                     help='Specify log config fileName[default: logcfg/logfile.conf]')
+    # args = parser.parse_args()
+    args = parser.parse_args(['--filelog', '-b 180.121.11.1', '-p8000', '-l logNewFile'])
+    print ("测试:[" + args + "].")
     # if args.cgi:
     #     handler_class = CGIHTTPRequestHandler
     # else:
@@ -83,7 +89,7 @@ if __name__ == "__main__":
     # else:
     #     port = 8000
 
-    if args.logconsole:
+    if not args.filelog:
         logName = "root"
     else:
         logName = "filelog"
@@ -98,7 +104,7 @@ if __name__ == "__main__":
     port = args.port
     logFileName = args.logfile
 
-    hostName = '127.0.0.1'
+    hostName = args.bind
     # 启动CRF服务线程
     crfserver = ServerThread("[CRF-Server-Tread]", CRFHttpHandler, port, hostName=hostName, logName=logName)
     crfserver.start()
