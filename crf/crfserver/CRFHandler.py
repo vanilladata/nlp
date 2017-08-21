@@ -20,7 +20,7 @@ import_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 import_dir = os.path.abspath(os.path.join(import_dir, "crftest"))
 sys.path.append(import_dir)
 # sys.path.insert(0, import_dir)
-import crfppResult.crfppresult as crfpp
+import crfppResult as crfpp
 
 
 class CRFHttpHandler(BaseHTTPRequestHandler):
@@ -157,7 +157,7 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
         #     }
         # ]}
 
-        respData = crfpp.crfpptest(respDataList)
+        respData = crfpp.crfppresult.crfpptest(respDataList)
 
         respDataLog = json.dumps(respData, encoding=self.encoding, ensure_ascii=False)
         self.inner_logger.info(
