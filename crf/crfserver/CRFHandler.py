@@ -16,14 +16,11 @@ import MyCommonutils
 import os
 import sys
 
-import_dir = os.path.join(os.path.join(os.path.dirname(__file__), os.pardir), 'crftest')
+import_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+import_dir = os.path.abspath(os.path.join(import_dir, "crftest"))
 sys.path.append(import_dir)
-print "add :[%s]" % import_dir
 # sys.path.insert(0, import_dir)
 import crfppResult.crfppresult as crfpp
-
-
-# crfppResult = __import__(file_name)
 
 
 class CRFHttpHandler(BaseHTTPRequestHandler):
