@@ -17,7 +17,7 @@ import json
 class CRFHttpHandler(BaseHTTPRequestHandler):
     """请求处理器类"""
     pathGetHandlerMap = {"/CRFTag/tagText": "testget"}
-    pathPostHandlerMap = {"/CRFTag/tagText": "testDome"}
+    pathPostHandlerMap = {"/CRFTag/tagText": "testDome", "CRFTag/textEmotionTag": "textEmotionTag"}
 
     def parsePath(self):
         parsed_result = urlparse.urlparse(self.path)
@@ -126,6 +126,24 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
             respData = {"result": "true", "data": "hello 老大."}
         else:
             respData = {"result": "true", "data": "hello 小弟."}
+        return respData
+
+    def posttextEmotionTag(self):
+        reqestJsonData = self.requestJsonData
+        self.inner_logger.info(
+            "tag for sentance:[]" % (
+                reqestJsonData))
+
+        respData = {"result": True, "respDatas": [
+            {
+                "tokens": ["这个", "冰箱", "很好", "快递", "很", "给力"],
+                "lables": ["BI", "BI", "BI", "BI", "BI", "BI", "BI"]
+            },
+            {
+                "tokens": ["这个", "冰箱", "很好", "快递", "很", "给力"],
+                "lables": ["BI", "BI", "BI", "BI", "BI", "BI", "BI"]
+            }
+        ]}
         return respData
 
     def writeStr(self, str):
