@@ -3,7 +3,7 @@
 # import http.server
 # from http.server import SimpleHTTPRequestHandler
 # from http.server import BaseHTTPRequestHandler
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 from BaseHTTPServer import BaseHTTPRequestHandler
 import urlparse as urlparse
 # from urllib import parse as urlparse
@@ -12,13 +12,15 @@ import cgi
 import io
 import shutil
 import json
+import MyCommonutils
+
 import crfppResult.crfppresult as crfpp
 
 
 class CRFHttpHandler(BaseHTTPRequestHandler):
     """请求处理器类"""
     pathGetHandlerMap = {"/CRFTag/tagText": "testget"}
-    pathPostHandlerMap = {"/CRFTag/tagText": "testDome", "CRFTag/textEmotionTag": "textEmotionTag"}
+    pathPostHandlerMap = {"/CRFTag/tagText": "testDome", "/CRFTag/textEmotionTag": "textEmotionTag"}
 
     def parsePath(self):
         parsed_result = urlparse.urlparse(self.path)
@@ -92,13 +94,15 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
         #     postvars = {}
         #     self.inner_logger.debug(postvars.get("listName", "didn't find it"))
         datas = self.rfile.read(int(self.headers['content-length']))
-        jsonData = json.loads(datas, encoding=enc)
+        # datas = datas.decode(enc).encode()
+        jsonData = json.loads(datas)
         self.requestJsonData = jsonData
 
         func = CRFHttpHandler.pathPostHandlerMap[parsed_path]
         respData = getattr(self, "post" + func)()
-        respData = json.dumps(respData, encoding=self.encoding)
-        # respData = respData.encode(encoding="utf-8")
+
+        # response data in unicode
+        # respData = respData.encode(enc)
         content = bytes.encode(respData, enc)  # 将应答信息编码为指定编码方式
 
         # write response data
@@ -133,8 +137,8 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
         respDataList = self.requestJsonData["reqDatas"]
         # reqestJsonData = self.requestJsonData
         self.inner_logger.info(
-            "tag for sentance:[]" % (
-                str(respDataList)))
+            "tag for sentance:[%s]" % (
+                MyCommonutils.getInStr(json.dumps(respDataList, ensure_ascii=False))))
 
         # respData = {"result": True, "respDatas": [
         #     {
@@ -148,9 +152,13 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
         # ]}
 
         respData = crfpp.crfpptest(respDataList)
+
+        respDataLog = json.dumps(respData, encoding=self.encoding, ensure_ascii=False)
         self.inner_logger.info(
             "tag for sentance success. result:[%s]" % (
-                str(respData)))
+                MyCommonutils.getInStr(respDataLog)))
+
+        respData = json.dumps(respData, encoding=self.encoding)
         return respData
 
     def writeStr(self, str):

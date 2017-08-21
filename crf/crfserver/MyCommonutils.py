@@ -20,3 +20,11 @@ def initlog(workdir, logcfgFile):
     inner_logger = logging.getLogger('root')
     inner_logger = inner_logger
     inner_logger.info("mode:[logger] init success!")
+
+
+def getInStr(strSource):
+    if isinstance(strSource, unicode):
+        strSource = strSource.encode('UTF-8')
+        return strSource
+    else:
+        return strSource

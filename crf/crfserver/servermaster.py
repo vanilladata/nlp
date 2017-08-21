@@ -95,14 +95,13 @@ if __name__ == "__main__":
         logName = "filelog"
 
     # 初始化日志
-    logFileName = args.logfile
+    logCfgFileName = args.logcfg
     workDir = myutils.script_path()
-    initlog(workDir, logFileName)
+    initlog(workDir, logCfgFileName)
 
     inner_log = logging.getLogger(logName)
 
     port = args.port
-    logFileName = args.logfile
 
     hostName = args.bind
     # 启动CRF服务线程
