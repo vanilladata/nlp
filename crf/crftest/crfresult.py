@@ -2,6 +2,7 @@
 import jieba
 jieba.load_userdict(r'../mydict.txt')
 jieba.initialize()
+# from utile import *
 from utile import *
 import os
 import json
@@ -10,12 +11,13 @@ stopwords = {} #停用词用dict存储速度会很快，如果用list存储，�
 for word in open('../stop_words.txt', 'r'):
     stopwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
 class crfresult:
+    """此程序适用于windows、和linux下，没采用CRFPP接口调用"""
     @classmethod
     def crftext(self, datas, output):
         """通过传入的list数据，返回CRF标注的结果并拼接成json格式返回"""
         connect = ""
         #把传入的list拼接成一个以句号拼接这样在分句的时候会自动把句号进行切分
-        for data in datas: connect += connect + data + "。"
+        for data in datas: connect = connect + data + "。"
         # print connect
         subsection = utile()
         resultlists = subsection.subsection(connect)
@@ -78,7 +80,6 @@ class crfresult:
                 taglist = []
                 dict = {}
         return json.dumps(resultlists)
-
 if __name__ == '__main__':
     datas = []
     datas.append("手机整体不错，只是信号有时比较弱,这个价格的手机已经算性价比高的了")
