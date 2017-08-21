@@ -1,13 +1,13 @@
 #encoding=utf8
 import jieba
-jieba.load_userdict(r'mydict.txt')
+jieba.load_userdict(r'../mydict.txt')
 jieba.initialize()
 from utile import *
 import os
 import json
 
 stopwords = {} #停用词用dict存储速度会很快，如果用list存储，会很慢
-for word in open('stop_words.txt', 'r'):
+for word in open('../stop_words.txt', 'r'):
     stopwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
 class crfresult:
     @classmethod
@@ -38,7 +38,8 @@ class crfresult:
             resultlist.append(writelist)
         self.writeCrfTrainData(resultlist, output)
         # 调用CRF模型得出结果
-        os.system(r'"crf_test -m model test.data > output.txt"')
+        os.system(r'"crf_test -m model test.data > output.txt"')#调用windows exe程序
+        # os.system("sh /home/hadoop/nlp/crf/exec.sh")#调用linux shell的脚步
         resultjson = self.readresult(u'output.txt')
         print resultjson
         return resultjson
@@ -80,7 +81,7 @@ class crfresult:
 
 if __name__ == '__main__':
     datas = []
-    datas.append("手机整体不错，只是信号有时比较弱，这个价格的手机已经算性价比高的了")
+    datas.append("手机整体不错，只是信号有时比较弱,这个价格的手机已经算性价比高的了")
     datas.append("很好用的一款手机，联想品牌真心不错，希望以后都能这样好下去，继续好用，一直好用")
     crfresult.crftext(datas,'test.data')
     # 物流是比较给力
