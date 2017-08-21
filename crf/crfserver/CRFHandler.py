@@ -13,8 +13,15 @@ import io
 import shutil
 import json
 import MyCommonutils
+import os
+import sys
 
-import crfppResult.crfppresult as crfpp
+# import crfppResult.crfppresult as crfpp
+
+import_dir = os.path.join(os.path.join(os.path.dirname(__file__), os.pardir), 'crftest')
+sys.path.insert(0, import_dir)
+file_name = 'crfppResult.py'
+crfppResult = __import__(file_name)
 
 
 class CRFHttpHandler(BaseHTTPRequestHandler):
@@ -151,7 +158,7 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
         #     }
         # ]}
 
-        respData = crfpp.crfpptest(respDataList)
+        respData = crfppResult.crfppresult.crfpptest(respDataList)
 
         respDataLog = json.dumps(respData, encoding=self.encoding, ensure_ascii=False)
         self.inner_logger.info(
