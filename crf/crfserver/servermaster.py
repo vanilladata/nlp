@@ -76,9 +76,9 @@ if __name__ == "__main__":
     #                     default="logcfg/logfile.conf", type=str,
     #                     nargs='?',
     #                     help='Specify log config fileName[default: logcfg/logfile.conf]')
-    # args = parser.parse_args()
-    args = parser.parse_args(['--filelog', '-b 180.121.11.1', '-p8000', '-l logNewFile'])
-    print ("测试:[" + args + "].")
+    args = parser.parse_args()
+    # args = parser.parse_args(['--filelog', '-b 180.121.11.1', '-p8000', '-l logNewFile'])
+    # print ("测试:[" + args + "].")
     # if args.cgi:
     #     handler_class = CGIHTTPRequestHandler
     # else:
