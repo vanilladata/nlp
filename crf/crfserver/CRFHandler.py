@@ -18,8 +18,8 @@ import sys
 
 import_dir = os.path.join(os.path.join(os.path.dirname(__file__), os.pardir), 'crftest')
 sys.path.append(import_dir)
+print "add :[%s]" % import_dir
 # sys.path.insert(0, import_dir)
-file_name = 'crfppResult.py'
 import crfppResult.crfppresult as crfpp
 
 
