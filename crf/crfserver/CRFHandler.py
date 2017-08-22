@@ -20,9 +20,7 @@ import_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 import_dir = os.path.abspath(os.path.join(import_dir, "crftest"))
 sys.path.append(import_dir)
 
-
-# sys.path.insert(0, import_dir)
-# import crfppResult as crfpp
+import crfppResult as crfpp
 
 
 class CRFHttpHandler(BaseHTTPRequestHandler):
@@ -107,15 +105,30 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
         self.requestJsonData = jsonData
 
         func = CRFHttpHandler.pathPostHandlerMap[parsed_path]
-        respData = getattr(self, "post" + func)()
+        respAllData = {}
+        respAllData["result"] = True
 
-        # response data in unicode
-        # respData = respData.encode(enc)
-        content = bytes.encode(respData, enc)  # 将应答信息编码为指定编码方式
+        try:
+            respData = getattr(self, "post" + func)()
+        except Exception as excp:
+            self.inner_logger.error(
+                "Handle request for path:[%s] excption:[invoke fun exption.] funcName:[%s] ErrorMsg:[%s] Method:[%s]." % (
+                    parsed_path, "post" + func, traceback.format_exc(), "Post"))
+            respAllData[u"errorMsg"] = u"invoke fun:[%s] exption" % u"post" + func.decode()
+            respData = "{}"
+            respAllData["result"] = False
+
+        # response data in unicode str
+        # 将应答的字符串 转化为对象
+        respData = json.loads(respData)
+
+        respAllData["respDatas"] = respData
+        respAllDataStr = json.dumps(respAllData, encoding=self.encoding)
+        content = bytes.encode(respAllDataStr, enc)  # 将应答信息编码为指定编码方式
 
         # write response data
         f = io.BytesIO()
-        f.write(respData)
+        f.write(respAllDataStr)
         f.seek(0)
         # write header
         self.send_response(200)
@@ -146,22 +159,29 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
         # reqestJsonData = self.requestJsonData
         logStr = MyCommonutils.getInStr(json.dumps(respDataList, ensure_ascii=False))  # , ensure_ascii=False
         self.inner_logger.info("tag for sentance:[%s]" % (logStr))
-        # -------------------------------测试代码-----------------------------#
-        # 固定报文
-        respData = {u"result": True, u"respDatas": [
-            {
-                u"tokens": [u"这个", u"冰箱", u"很好", u"快递", u"很", u"给力"],
-                u"lables": [u"BI", u"BI", u"BI", u"BI", u"BI", u"BI", u"BI"]
-            },
-            {
-                u"tokens": [u"这个", u"冰箱", u"很好", u"快递", u"很", u"给力"],
-                u"lables": [u"BI", u"BI", u"BI", u"BI", u"BI", u"BI", u"BI"]
-            }
-        ]}
-        # -------------------------------测试代码-----------------------------#
 
-        # 调用CRFPP接口
-        # respData = crfpp.crfppresult.crfpptest(respDataList)
+        try:
+            # -------------------------------测试代码-----------------------------#
+            # 固定报文
+            # respData = {u"result": True, u"respDatas": [
+            #     {
+            #         u"tokens": [u"这个", u"冰箱", u"很好", u"快递", u"很", u"给力"],
+            #         u"lables": [u"BI", u"BI", u"BI", u"BI", u"BI", u"BI", u"BI"]
+            #     },
+            #     {
+            #         u"tokens": [u"这个", u"冰箱", u"很好", u"快递", u"很", u"给力"],
+            #         u"lables": [u"BI", u"BI", u"BI", u"BI", u"BI", u"BI", u"BI"]
+            #     }
+            # ]}
+            # raise Exception("test excpiton.")
+            # -------------------------------测试代码-----------------------------#
+            # 调用CRFPP接口
+            respData = crfpp.crfppresult.crfpptest(respDataList)
+        except Exception as excp:
+            self.inner_logger.error(
+                "invoke crfppresult.crfpptest exception:[%s],Input params:[%s]" % (
+                    traceback.format_exc(), json.dumps(respDataList)))
+            raise excp
 
         respDataLog = json.dumps(respData, encoding=self.encoding, ensure_ascii=False)
         self.inner_logger.info(
