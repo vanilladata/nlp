@@ -3,7 +3,7 @@
 # import http.server
 # from http.server import SimpleHTTPRequestHandler
 # from http.server import BaseHTTPRequestHandler
-# from __future__ import unicode_literals
+from __future__ import unicode_literals
 from BaseHTTPServer import BaseHTTPRequestHandler
 import urlparse as urlparse
 # from urllib import parse as urlparse
