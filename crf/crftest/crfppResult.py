@@ -10,13 +10,18 @@ import CRFPP
 stopwords = {} #停用词用dict存储速度会很快，如果用list存储，会很慢
 for word in open('../stop_words.txt', 'r'):
     stopwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
+jieba.suggest_freq((u'反应',u'速度'),True)
+jieba.suggest_freq((u'反应速度',u'快'),True)
+jieba.suggest_freq((u'综合',u'性'),True)
+jieba.suggest_freq((u'价格',u'便宜'),True)
+jieba.suggest_freq((u'很',u'大气'),True)
 class crfppresult:
     @classmethod
     def crfpptest(self,datas):
         """通过传入的list数据，返回CRF标注的结果并拼接成json格式返回"""
         connect = ""
         # 把传入的list拼接成一个以句号拼接这样在分句的时候会自动把句号进行切分
-        for data in datas: connect = connect + data + "。"
+        for data in datas: connect = connect + data.encode("utf-8") + "。"
         # print connect
         subsection = utile()
         subsectlist = subsection.subsection(connect) #切分成句子
