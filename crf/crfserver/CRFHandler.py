@@ -3,7 +3,7 @@
 # import http.server
 # from http.server import SimpleHTTPRequestHandler
 # from http.server import BaseHTTPRequestHandler
-from __future__ import unicode_literals
+# from __future__ import unicode_literals
 from BaseHTTPServer import BaseHTTPRequestHandler
 import urlparse as urlparse
 # from urllib import parse as urlparse
@@ -19,8 +19,10 @@ import sys
 import_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 import_dir = os.path.abspath(os.path.join(import_dir, "crftest"))
 sys.path.append(import_dir)
+
+
 # sys.path.insert(0, import_dir)
-import crfppResult as crfpp
+# import crfppResult as crfpp
 
 
 class CRFHttpHandler(BaseHTTPRequestHandler):
@@ -142,22 +144,24 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
     def posttextEmotionTag(self):
         respDataList = self.requestJsonData["reqDatas"]
         # reqestJsonData = self.requestJsonData
-        self.inner_logger.info(
-            "tag for sentance:[%s]" % (
-                MyCommonutils.getInStr(json.dumps(respDataList, ensure_ascii=False))))
+        logStr = MyCommonutils.getInStr(json.dumps(respDataList, ensure_ascii=False))  # , ensure_ascii=False
+        self.inner_logger.info("tag for sentance:[%s]" % (logStr))
+        # -------------------------------测试代码-----------------------------#
+        # 固定报文
+        respData = {u"result": True, u"respDatas": [
+            {
+                u"tokens": [u"这个", u"冰箱", u"很好", u"快递", u"很", u"给力"],
+                u"lables": [u"BI", u"BI", u"BI", u"BI", u"BI", u"BI", u"BI"]
+            },
+            {
+                u"tokens": [u"这个", u"冰箱", u"很好", u"快递", u"很", u"给力"],
+                u"lables": [u"BI", u"BI", u"BI", u"BI", u"BI", u"BI", u"BI"]
+            }
+        ]}
+        # -------------------------------测试代码-----------------------------#
 
-        # respData = {"result": True, "respDatas": [
-        #     {
-        #         "tokens": ["这个", "冰箱", "很好", "快递", "很", "给力"],
-        #         "lables": ["BI", "BI", "BI", "BI", "BI", "BI", "BI"]
-        #     },
-        #     {
-        #         "tokens": ["这个", "冰箱", "很好", "快递", "很", "给力"],
-        #         "lables": ["BI", "BI", "BI", "BI", "BI", "BI", "BI"]
-        #     }
-        # ]}
-
-        respData = crfpp.crfppresult.crfpptest(respDataList)
+        # 调用CRFPP接口
+        # respData = crfpp.crfppresult.crfpptest(respDataList)
 
         respDataLog = json.dumps(respData, encoding=self.encoding, ensure_ascii=False)
         self.inner_logger.info(
