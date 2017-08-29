@@ -10,25 +10,30 @@ import CRFPP
 stopwords = {} #停用词用dict存储速度会很快，如果用list存储，会很慢
 for word in open('../stop_words.txt', 'r'):
     stopwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
+jieba.suggest_freq((u'反应',u'速度'),True)
+jieba.suggest_freq((u'反应速度',u'快'),True)
+jieba.suggest_freq((u'综合',u'性'),True)
+jieba.suggest_freq((u'价格',u'便宜'),True)
+jieba.suggest_freq((u'很',u'大气'),True)
 class crfppresult:
     @classmethod
-    def crfpptest(self,datas):
+    def crfpptest(self,datas,model_path):
         """通过传入的list数据，返回CRF标注的结果并拼接成json格式返回"""
         connect = ""
         # 把传入的list拼接成一个以句号拼接这样在分句的时候会自动把句号进行切分
-        for data in datas: connect = connect + data + "。"
-        # print connect
-        subsection = utile()
-        subsectlist = subsection.subsection(connect) #切分成句子
-
-        tagger = CRFPP.Tagger("-m model -n1")   #CRFPP 读取模型，现在是写死的，以后可以直接改成参数
+        # for data in datas: connect = connect + data.encode("utf-8") + "。"
+        # # print connect
+        # subsection = utile()
+        # subsectlist = subsection.subsection(connect) #切分成句子
+        model = "-m " + model_path +" -n1"
+        tagger = CRFPP.Tagger(model)   #CRFPP 读取模型，现在是写死的，以后可以直接改成参数
         taglist = []    #接json用的,把所有的标签放到list中
         wordlist = []   #接json用的，把所有的词放到list中
         dict = {}       #接json用的
         resultlist = [] #接json用的,也是最后返回的
-        for r in subsectlist:
+        for r in datas:
             tagger.clear()
-            seg_list = jieba.cut(r)
+            seg_list = jieba.cut(r.encode("utf-8"))
             seg_list_after = []
             # 去掉停用词
             for seg in seg_list:
