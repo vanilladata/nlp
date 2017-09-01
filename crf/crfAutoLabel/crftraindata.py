@@ -59,26 +59,13 @@ class crftraindata:
             for j in range(1, cols):
                 labellists = sheet.row_values(i + 1)
                 if lists[j] != '':
-                    seg_list = jieba.cut(lists[j])
-                    seg_list_after = []
-                    # 去掉停用词
-                    for seg in seg_list:
-                        # if seg.encode('utf-8') not in stopwords.keys():
-                        #     seg_list_after.append(seg) #用not in 速度很慢，1.63秒才出
-                        if stopwords.has_key(seg.encode('utf-8')):
-                            continue
-                        else:
-                            seg_list_after.append(seg)
                     col2 = labellists[j]
-                    for colword in seg_list_after:
-                        if colword != ' ' and colword != '\n' and colword != '\n\n':
-                            if col2 == '':
-                                col2 = 'N'
-                                writelist.append(colword + ' ' + col2)
-                                # print colword + '   ' + col2clear
-                            else:
-                                writelist.append(colword + ' ' + col2)
-                                # print colword + '   ' + col2
+                    if col2 == '':
+                        col2 = 'N'
+                        writelist.append(lists[j] + ' ' + col2)
+                        # print colword + '   ' + col2clear
+                    else: writelist.append(lists[j] + ' ' + col2)
+                        # print colword + '   ' + col2
             resultlist.append(writelist)
         # print '行数: ', rows, ' 列数: ', cols
         self.writeCrfTrainData(resultlist,self.outfile)
@@ -201,11 +188,12 @@ if __name__ == '__main__':
     # NounAdjectivesExcel.generatingNounAdjectivesExcel()
 
     # 给文本自动打标注
-    # annotatformat = crftraindata(u'整体评论-联想手机训练.xlsx', u'Sheet1', u'结果.xls')
+    # annotatformat = crftraindata(u'整体评论-联想手机测试 - 副本.xlsx', u'Sheet1', u'结果.xls')
     # annotatformat.annotationformat()
 
     # 把自动打的标注转换成CRF的格式
-    NounAdjectivesExcel = crftraindata(u"结果.xls", u"Sheet1", u'train.data')
+    # NounAdjectivesExcel = crftraindata(u"整体评论-联想手机测试.xlsx", u"Sheet1", u'test.data')
+    NounAdjectivesExcel = crftraindata(u"手机评论机器结果更正训练.xlsx", u"Sheet2", u'test.data')
     NounAdjectivesExcel.readexcel()
 
 
