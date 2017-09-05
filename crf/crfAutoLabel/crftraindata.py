@@ -56,6 +56,7 @@ class crftraindata:
         for i in range(0, rows, 2):
             lists = sheet.row_values(i)
             writelist = []
+            uselesswords = 0 #无用词标记,在训练时把整行都为N的句子去掉
             for j in range(1, cols):
                 labellists = sheet.row_values(i + 1)
                 if lists[j] != '':
@@ -66,7 +67,10 @@ class crftraindata:
                         # print colword + '   ' + col2clear
                     else: writelist.append(lists[j] + ' ' + col2)
                         # print colword + '   ' + col2
-            resultlist.append(writelist)
+                    if col2 != 'N':
+                        uselesswords = uselesswords + 1
+            if uselesswords > 0 :
+                resultlist.append(writelist)
         # print '行数: ', rows, ' 列数: ', cols
         self.writeCrfTrainData(resultlist,self.outfile)
 
@@ -193,7 +197,7 @@ if __name__ == '__main__':
 
     # 把自动打的标注转换成CRF的格式
     # NounAdjectivesExcel = crftraindata(u"整体评论-联想手机测试.xlsx", u"Sheet1", u'test.data')
-    NounAdjectivesExcel = crftraindata(u"手机评论机器结果更正训练.xlsx", u"Sheet2", u'test.data')
+    NounAdjectivesExcel = crftraindata(u"手机评论机器结果更正.xlsx", u"Sheet2", u'train1.data')
     NounAdjectivesExcel.readexcel()
 
 
