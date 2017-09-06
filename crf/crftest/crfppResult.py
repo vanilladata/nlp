@@ -8,9 +8,9 @@ import json
 import CRFPP
 import re
 
-stopwords = {} #停用词用dict存储速度会很快，如果用list存储，会很慢
+stopwords = set()#停用词用set存储速度会很快，如果用list存储，会很慢
 for word in open('../stop_words.txt', 'r'):
-    stopwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
+    stopwords.add(word.strip())
 jieba.suggest_freq((u'反应',u'速度'),True)
 jieba.suggest_freq((u'反应速度',u'快'),True)
 jieba.suggest_freq((u'综合',u'性'),True)
