@@ -2,14 +2,15 @@
 import jieba
 jieba.load_userdict(r'../mydict.txt')
 jieba.initialize()
-from utile import *
-import os
-import json
+# from utile import *
+# import os
+# import json
 import CRFPP
+import re
 
-stopwords = {} #停用词用dict存储速度会很快，如果用list存储，会很慢
+stopwords = set()  #停用词用set存储速度会很快，如果用list存储，会很慢
 for word in open('../stop_words.txt', 'r'):
-    stopwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
+    stopwords.add(word.strip())
 jieba.suggest_freq((u'反应',u'速度'),True)
 jieba.suggest_freq((u'反应速度',u'快'),True)
 jieba.suggest_freq((u'综合',u'性'),True)
@@ -29,23 +30,15 @@ class crfppresult:
         tagger = CRFPP.Tagger("-m /data/3inlp/nlp/crf/crftest/model -n1")   #CRFPP 读取模型，现在是写死的，以后可以直接改成参数
         taglist = []    #接json用的,把所有的标签放到list中
         wordlist = []   #接json用的，把所有的词放到list中
-        dict = {}       #接json用的
         resultlist = [] #接json用的,也是最后返回的
         for r in datas:
             tagger.clear()
             seg_list = jieba.cut(r.encode("utf-8"))
-            seg_list_after = []
-            # 去掉停用词
+            # 去掉停用词后的词加载到CRFPP中
             for seg in seg_list:
-                if stopwords.has_key(seg.encode('utf-8')):
-                    continue
-                else:
-                    seg_list_after.append(seg)
-
-            #去掉停用词后的词加载到CRFPP中
-            for seg in seg_list_after:
-                if (seg.encode("utf-8") not in stopwords and seg != ' ' and seg != '\n' and seg != '\n\n'):
-                    tagger.add(seg.encode('utf-8'))
+                seg_str = seg.encode("utf-8")
+                if (seg_str not in stopwords and not re.match(r'\s+',seg_str)):
+                    tagger.add(seg_str)
             tagger.parse()
             size = tagger.size() #行数
             xsize = tagger.xsize()
@@ -55,17 +48,13 @@ class crfppresult:
                 for j in range(0,xsize):
                     wordlist.append(tagger.x(i,j).decode('utf-8'))  #返回的是词
                     taglist.append(tagger.y2(i))    #返回的是标签
-                    # print tagger.x(i,j).decode('utf-8'), tagger.y2(i)
-            dict["lables"] = taglist
-            dict["tokens"] = wordlist
-            resultlist.append(dict)
+            resultlist.append({"tokens":wordlist,"lables":taglist})
             wordlist = []
             taglist = []
-            dict = {}
         return resultlist
 
 if __name__ == '__main__':
     datas = []
-    datas.append("手机整体不错，只是信号有时比较弱,这个价格的手机已经算性价比高的了")
-    datas.append("很好用的一款手机，联想品牌真心不错，希望以后都能这样好下去，继续好用，一直好用")
+    datas.append(u"手机整体不错，只是信号有时比较弱,这个价格的手机已经算性价比高的了")
+    datas.append(u"很好用的一款手机，联想品牌真心不错，希望以后都能这样好下去，继续好用，一直好用")
     crfppresult.crfpptest(datas)
