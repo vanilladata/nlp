@@ -11,7 +11,19 @@ def script_path():
     return os.path.abspath(os.path.dirname(this_file))
 
 
-# 初始化日志
+def getParentDir(path):
+    parentDir = os.path.abspath(os.path.join(path, os.pardir))
+    parentDir = os.path.abspath(parentDir)
+    return parentDir
+    # import_dir = os.path.abspath(os.path.join(import_dir, "crftest"))
+
+
+def getChildDir(path, childName):
+    childDir = os.path.abspath(os.path.join(path, childName))
+    return childDir
+
+
+ # 初始化日志
 def initlog(workdir, logcfgFile):
     logcfgFullName = os.path.join(workdir, logcfgFile)
     logging.config.fileConfig(logcfgFullName)

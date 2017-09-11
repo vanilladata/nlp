@@ -15,6 +15,8 @@ import json
 import MyCommonutils
 import os
 import sys
+import GongXianCul
+from ExeContext import ExeContext
 
 import_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 import_dir = os.path.abspath(os.path.join(import_dir, "crftest"))
@@ -26,7 +28,8 @@ import crfppResult as crfpp
 class CRFHttpHandler(BaseHTTPRequestHandler):
     """请求处理器类"""
     pathGetHandlerMap = {"/CRFTag/tagText": "testget"}
-    pathPostHandlerMap = {"/CRFTag/tagText": "testDome", "/CRFTag/textEmotionTag": "textEmotionTag"}
+    pathPostHandlerMap = {"/CRFTag/tagText": "testDome", "/CRFTag/textEmotionTag": "textEmotionTag",
+                          "/GXGX/culRelation": "culRelation"}
 
     def parsePath(self):
         parsed_result = urlparse.urlparse(self.path)
@@ -114,7 +117,7 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
             self.inner_logger.error(
                 "Handle request for path:[%s] excption:[invoke fun exption.] funcName:[%s] ErrorMsg:[%s] Method:[%s]." % (
                     parsed_path, "post" + func, traceback.format_exc(), "Post"))
-            respAllData[u"errorMsg"] = u"invoke fun:[%s] exption" % u"post" + func.decode()
+            respAllData[u"errorMsg"] = u"invoke fun:[%s] exption" % ("post" + func)
             respData = "{}"
             respAllData["result"] = False
 
@@ -156,6 +159,21 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
 
     def posttextEmotionTag(self):
         respDataList = self.requestJsonData["reqDatas"]
+
+        if self.requestJsonData.has_key("modelPath"):
+            modelPath = self.requestJsonData["modelPath"]
+        else:
+            modelPath = ExeContext.context["modelDir"]
+
+        if self.requestJsonData.has_key("modelName"):
+            modelName = self.requestJsonData["modelName"]
+        else:
+            modelName = ExeContext.context["modelName"]
+
+        context = dict()
+        context["modelPath"] = modelPath
+        context["modelName"] = modelName
+
         # reqestJsonData = self.requestJsonData
         logStr = MyCommonutils.getInStr(json.dumps(respDataList, ensure_ascii=False))  # , ensure_ascii=False
         self.inner_logger.info("tag for sentance:[%s]" % (logStr))
@@ -176,7 +194,7 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
             # raise Exception("test excpiton.")
             # -------------------------------测试代码-----------------------------#
             # 调用CRFPP接口
-            respData = crfpp.crfppresult.crfpptest(respDataList)
+            respData = crfpp.crfppresult.crfpptest(respDataList, context)
         except Exception as excp:
             self.inner_logger.error(
                 "invoke crfppresult.crfpptest exception:[%s],Input params:[%s]" % (
@@ -198,6 +216,25 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
     def gettestget(self):
         self.inner_logger.debug("into gettestget ...")
         return "ok test success!"
+
+    def postculRelation(self):
+        jsonData = self.requestJsonData
+        docs = jsonData[u"docs"]
+        tokens = jsonData[u"tokens"]
+        tokensSet = set()
+
+        for token in tokens:
+            tokensSet.add(token)
+        result = GongXianCul.culGongxian(docs, tokensSet)
+
+        # 记录日志
+        respDataLog = json.dumps(result, encoding=self.encoding, ensure_ascii=False)
+        self.inner_logger.info(
+            "calculate gongxin ralation succes. result:[%s]" % (
+                MyCommonutils.getInStr(respDataLog)))
+
+        respData = json.dumps(result, encoding=self.encoding)
+        return respData
 
 
 class CRFManagerHandler(CRFHttpHandler):

@@ -11,6 +11,7 @@ import time
 from MyCommonutils import initlog
 import MyCommonutils as myutils
 import logging
+from ExeContext import ExeContext
 
 
 class ServerThread(threading.Thread):
@@ -104,6 +105,18 @@ if __name__ == "__main__":
     port = args.port
 
     hostName = args.bind
+
+    ExeContext.context["logName"] = logName
+    ExeContext.context["bind"] = hostName
+    ExeContext.context["port"] = port
+    ExeContext.context["logcfg"] = logCfgFileName
+
+    projectDir = myutils.getParentDir(workDir)
+    ExeContext.context["projectDir"] = projectDir
+    ExeContext.context["crfServerDir"] = workDir
+    modelDir = myutils.getChildDir(projectDir, "model")
+    ExeContext.context["modelDir"] = modelDir
+
     # 启动CRF服务线程
     crfserver = ServerThread("[CRF-Server-Tread]", CRFHttpHandler, port, hostName=hostName, logName=logName)
     crfserver.start()
