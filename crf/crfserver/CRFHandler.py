@@ -17,6 +17,7 @@ import os
 import sys
 import GongXianCul
 from ExeContext import ExeContext
+from SegmentUtil import JieBaSegment as segmentUtils
 
 import_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 import_dir = os.path.abspath(os.path.join(import_dir, "crftest"))
@@ -29,7 +30,7 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
     """请求处理器类"""
     pathGetHandlerMap = {"/CRFTag/tagText": "testget"}
     pathPostHandlerMap = {"/CRFTag/tagText": "testDome", "/CRFTag/textEmotionTag": "textEmotionTag",
-                          "/GXGX/culRelation": "culRelation"}
+                          "/GXGX/culRelation": "culRelation", "/nlp/segment": "testSeg"}
 
     def parsePath(self):
         parsed_result = urlparse.urlparse(self.path)
@@ -235,6 +236,33 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
 
         respData = json.dumps(result, encoding=self.encoding)
         return respData
+
+    def posttestSeg(self):
+        reqData = self.requestJsonData
+        if None == segmentUtils.logger:
+            segmentUtils.logger = self.inner_logger
+
+        if u"text" in reqData:
+            text = reqData[u"text"]
+        else:
+            raise Exception("text is null.")
+
+        # 获取分词词典
+        if u"dict" in reqData:
+            dictFileName = reqData[u"dict"]
+            result = segmentUtils.segment(text, dictFileName)
+        else:
+            result = segmentUtils.segment(text)
+
+        # 记录日志
+        respDataLog = json.dumps(result, encoding=self.encoding, ensure_ascii=False)
+        self.inner_logger.info(
+            "calculate gongxin ralation succes. result:[%s]" % (
+                MyCommonutils.getInStr(respDataLog)))
+
+        respData = json.dumps(result, encoding=self.encoding)
+        return respData
+        pass
 
 
 class CRFManagerHandler(CRFHttpHandler):

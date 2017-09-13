@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="")
 
-    parser.add_argument('--bind', '-b', default='127.0.0.1', metavar='ADDRESS',
+    parser.add_argument('--bind', '-b', default='0.0.0.0', metavar='ADDRESS',
                         help='Specify alternate bind address '
                              '[default: all interfaces]', dest="bind")
 
@@ -114,8 +114,14 @@ if __name__ == "__main__":
     projectDir = myutils.getParentDir(workDir)
     ExeContext.context["projectDir"] = projectDir
     ExeContext.context["crfServerDir"] = workDir
+
+    # 设置模型目录
     modelDir = myutils.getChildDir(projectDir, "model")
     ExeContext.context["modelDir"] = modelDir
+
+    # 设置词典目录
+    dictDir = myutils.getChildDir(projectDir, "dict")
+    ExeContext.context["dictDir"] = dictDir
 
     # 启动CRF服务线程
     crfserver = ServerThread("[CRF-Server-Tread]", CRFHttpHandler, port, hostName=hostName, logName=logName)
