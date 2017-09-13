@@ -8,8 +8,9 @@ import os
 import json
 
 stopwords = {} #停用词用dict存储速度会很快，如果用list存储，会很慢
-for word in open('../stop_words.txt', 'r'):
-    stopwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
+for word in open('../stop_words.txt', 'r'):stopwords[word.strip()] = 1
+    # stopwords[word.strip().decode('gbk', 'ignore').encode('utf-8')] = 1
+    # stopwords[word.strip()] = 1
 jieba.suggest_freq((u'反应',u'速度'),True)
 jieba.suggest_freq((u'反应速度',u'快'),True)
 jieba.suggest_freq((u'综合',u'性'),True)
@@ -66,6 +67,7 @@ class crfresult:
     #读取结果数据
     @classmethod
     def readresult(self, infile):
+        """读取结果数据"""
         taglist = []
         wordlist = []
         dict = {}
@@ -88,6 +90,6 @@ class crfresult:
 if __name__ == '__main__':
     datas = []
     # datas.append(u"你好，条件随机场")
-    datas.append(u"很好用的一款手机，联想品牌真心不错。希望以后都能这样好下去，继续好用，一直好用")
+    datas.append(u"第一次买华为的手机，朋友推荐的，感觉不错！像素很高！照相效果极佳！只是物流不大给力，预备情人节给老公的礼物15号才收到！")
     crfresult.crftext(datas,'test.data')
     # 物流是比较给力
