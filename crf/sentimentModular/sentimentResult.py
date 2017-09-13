@@ -64,8 +64,8 @@ class sentimentResult:
             else:
                 resultValue += u'中'
             resultlist.append({"id":data["id"],"emotion":resultValue})
-            print " 负面评价: ", n, ", 正面评价: ", p
-            return resultlist
+            # print " 负面评价: ", n, ", 正面评价: ", p
+        return resultlist
 
     # 传入文本并分词存入tokens
     @classmethod
@@ -102,6 +102,8 @@ if __name__ == "__main__":
     # datas.append(u"手机整体不错，只是信号有时比较弱,这个价格的手机已经算性价比高的了")
     # datas.append(u"很好用的一款手机，联想品牌真心不错，希望以后都能这样好下去，继续好用，一直好用")
     datas.append({"id": "123", "content": "【律师解读: 阿里云被判侵权, 云服务器行业面临重大转折?】雷锋网按：本文作者赵占领，知名IT与知识产权律师、中国政法大学知识产权研究中心特约研究员、中国网络诚信联盟法律顾问、经济之声与法制日报特约评http://t.cn/RSBAQxA ​ ​"})
+    datas.append({"id": "456",
+                  "content": "我们作为阿里云用户肯定是支持阿里云的。但是如果反过来想想，如果自己的产品被侵权，这样投诉好像也没错吧！//@阿里云: 【对不起，这个官司我不服！数据隐私保护是阿里云的生命线】这次事件中，保护用户隐私是我们第一原则。我们认为，作为云服务器提供商，阿里云无权审查任何用户数据。"})
     resultlist = sentimentResult.sentiment(datas)
     for result in resultlist:
         print "文档id: ",result["id"],"文档正负向：", result["emotion"]
