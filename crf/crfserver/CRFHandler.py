@@ -281,7 +281,7 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
         return respData
 
     # 情感正负向判定接口
-    def emotionPredictpost(self):
+    def postemotionPredict(self):
         reqData = self.requestJsonData
 
         # 获取数据
