@@ -19,18 +19,33 @@ from baseutils.GongXianCul import culGongxian
 from baseutils.ExeContext import ExeContext
 from baseutils.SegmentUtil import JieBaSegment as segmentUtils
 
-import_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
-import_dir = os.path.abspath(os.path.join(import_dir, "crftest"))
-sys.path.append(import_dir)
+project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+crf_dir = os.path.abspath(os.path.join(project_dir, "crftest"))
+sys.path.append(crf_dir)
+
+sentiment_dir = os.path.abspath(os.path.join(project_dir, "sentimentModular"))
+sys.path.append(sentiment_dir)
 
 import crfppResult as crfpp
+import sentimentResult as emotionJudge
 
 
 class CRFHttpHandler(BaseHTTPRequestHandler):
     """请求处理器类"""
-    pathGetHandlerMap = {"/CRFTag/tagText": "testget"}
-    pathPostHandlerMap = {"/CRFTag/tagText": "testDome", "/CRFTag/textEmotionTag": "textEmotionTag",
-                          "/GXGX/culRelation": "culRelation", "/nlp/segment": "testSeg"}
+
+    # GET 请求映射配置
+    pathGetHandlerMap = {
+        "/CRFTag/tagText": "testget"
+    }
+
+    # post请求映射配置
+    pathPostHandlerMap = {
+        "/CRFTag/tagText": "testDome",
+        "/CRFTag/textEmotionTag": "textEmotionTag",
+        "/GXGX/culRelation": "culRelation",
+        "/nlp/segment": "testSeg",
+        "/emotion/predict": "emotionPredict"
+    }
 
     def parsePath(self):
         parsed_result = urlparse.urlparse(self.path)
@@ -158,6 +173,7 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
             respData = {"result": "true", "data": "hello 小弟."}
         return respData
 
+    # 情感、实体识别接口
     def posttextEmotionTag(self):
         respDataList = self.requestJsonData["reqDatas"]
 
@@ -237,6 +253,7 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
         respData = json.dumps(result, encoding=self.encoding)
         return respData
 
+    # 分词接口
     def posttestSeg(self):
         reqData = self.requestJsonData
         if None == segmentUtils.logger:
@@ -262,7 +279,24 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
 
         respData = json.dumps(result, encoding=self.encoding)
         return respData
-        pass
+
+    # 情感正负向判定接口
+    def emotionPredictpost(self):
+        reqData = self.requestJsonData
+
+        # 获取数据
+        if not u"datas" in reqData:
+            raise Exception("datas is null.")
+
+        result = emotionJudge.sentimentResult.sentiment(reqData[u"datas"])
+
+        respDataLog = json.dumps(result, encoding=self.encoding, ensure_ascii=False)
+        self.inner_logger.info(
+            "predict enotion for docs success. result:[%s]" % (
+                MyCommonutils.getInStr(respDataLog)))
+
+        respData = json.dumps(result, encoding=self.encoding)
+        return respData
 
 
 class CRFManagerHandler(CRFHttpHandler):
