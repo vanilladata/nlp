@@ -15,9 +15,9 @@ import json
 import MyCommonutils
 import os
 import sys
-import GongXianCul
-from ExeContext import ExeContext
-from SegmentUtil import JieBaSegment as segmentUtils
+from baseutils.GongXianCul import culGongxian
+from baseutils.ExeContext import ExeContext
+from baseutils.SegmentUtil import JieBaSegment as segmentUtils
 
 import_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 import_dir = os.path.abspath(os.path.join(import_dir, "crftest"))
@@ -226,7 +226,7 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
 
         for token in tokens:
             tokensSet.add(token)
-        result = GongXianCul.culGongxian(docs, tokensSet)
+        result = culGongxian(docs, tokensSet)
 
         # 记录日志
         respDataLog = json.dumps(result, encoding=self.encoding, ensure_ascii=False)
