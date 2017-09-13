@@ -26,7 +26,7 @@ class crfppresult:
         # # print connect
         # subsection = utile()
         # subsectlist = subsection.subsection(connect) #切分成句子
-        model = "-m " + context["modelpath"]+"/"+context["modelName"] +" -n1"
+        model = "-m " + context["modelPath"]+"/"+context["modelName"] +" -n1"
         tagger = CRFPP.Tagger(model)   #CRFPP 读取模型，现在是写死的，以后可以直接改成参数
         taglist = []    #接json用的,把所有的标签放到list中
         wordlist = []   #接json用的，把所有的词放到list中
