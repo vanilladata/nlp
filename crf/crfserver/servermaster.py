@@ -90,38 +90,47 @@ if __name__ == "__main__":
     # else:
     #     port = 8000
 
-    if not args.filelog:
-        logName = "root"
-    else:
-        logName = "filelog"
+    # if not args.filelog:
+    #     logName = "root"
+    # else:
+    #     logName = "filelog"
+    #
+    # # 初始化日志
+    # logCfgFileName = args.logcfg
+    # workDir = myutils.script_path()
+    # initlog(workDir, logCfgFileName)
+    #
+    # inner_log = logging.getLogger(logName)
+    #
+    # port = args.port
+    #
+    # hostName = args.bind
+    #
+    # ExeContext.context["logName"] = logName
+    # ExeContext.context["bind"] = hostName
+    # ExeContext.context["port"] = port
+    # ExeContext.context["logcfg"] = logCfgFileName
+    #
+    # projectDir = myutils.getParentDir(workDir)
+    # ExeContext.context["projectDir"] = projectDir
+    # ExeContext.context["crfServerDir"] = workDir
+    #
+    # # 设置模型目录
+    # modelDir = myutils.getChildDir(projectDir, "model")
+    # ExeContext.context["modelDir"] = modelDir
+    #
+    # # 设置词典目录
+    # dictDir = myutils.getChildDir(projectDir, "dict")
+    # ExeContext.context["dictDir"] = dictDir
 
-    # 初始化日志
-    logCfgFileName = args.logcfg
-    workDir = myutils.script_path()
-    initlog(workDir, logCfgFileName)
+    #
+    ExeContext.initProject(args)
 
-    inner_log = logging.getLogger(logName)
+    inner_log = ExeContext.getLogger()
 
-    port = args.port
-
-    hostName = args.bind
-
-    ExeContext.context["logName"] = logName
-    ExeContext.context["bind"] = hostName
-    ExeContext.context["port"] = port
-    ExeContext.context["logcfg"] = logCfgFileName
-
-    projectDir = myutils.getParentDir(workDir)
-    ExeContext.context["projectDir"] = projectDir
-    ExeContext.context["crfServerDir"] = workDir
-
-    # 设置模型目录
-    modelDir = myutils.getChildDir(projectDir, "model")
-    ExeContext.context["modelDir"] = modelDir
-
-    # 设置词典目录
-    dictDir = myutils.getChildDir(projectDir, "dict")
-    ExeContext.context["dictDir"] = dictDir
+    logName = ExeContext.context["logName"]
+    hostName = ExeContext.context["bind"]
+    port = ExeContext.context["port"]
 
     # 启动CRF服务线程
     crfserver = ServerThread("[CRF-Server-Tread]", CRFHttpHandler, port, hostName=hostName, logName=logName)

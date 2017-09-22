@@ -18,6 +18,7 @@ import sys
 from baseutils.GongXianCul import culGongxian
 from baseutils.ExeContext import ExeContext
 from baseutils.SegmentUtil import JieBaSegment as segmentUtils
+import MyCommonutils as myutils
 
 project_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
 crf_dir = os.path.abspath(os.path.join(project_dir, "crftest"))
@@ -266,10 +267,12 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
 
         # 获取分词词典
         if u"dict" in reqData:
+            dictDir = ExeContext.context["dictDir"]
             dictFileName = reqData[u"dict"]
-            result = segmentUtils.segment(text, dictFileName)
+            dictFullPath = myutils.getChildDir(dictDir, dictFileName)
+            result = segmentUtils.segment(text, dictFullPath)
         else:
-            result = segmentUtils.segment(text)
+            result = segmentUtils.segmentByDefault(text)
 
         # 记录日志
         respDataLog = json.dumps(result, encoding=self.encoding, ensure_ascii=False)

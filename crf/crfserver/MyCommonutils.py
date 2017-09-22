@@ -1,6 +1,7 @@
 # coding:utf8
 """常用工具类"""
 import logging
+import logging.config
 import os
 
 
@@ -23,7 +24,7 @@ def getChildDir(path, childName):
     return childDir
 
 
- # 初始化日志
+# 初始化日志
 def initlog(workdir, logcfgFile):
     logcfgFullName = os.path.join(workdir, logcfgFile)
     logging.config.fileConfig(logcfgFullName)
