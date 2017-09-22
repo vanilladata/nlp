@@ -141,7 +141,7 @@ if __name__ == "__main__":
     holder = crfserver.serverSupportor
 
     managerPort = 8001
-    managerServer = ServerManagerThread("[CRF-Manager-Tread]", CRFManagerHandler, managerPort, hostName='127.0.0.1',
+    managerServer = ServerManagerThread("[CRF-Manager-Tread]", CRFManagerHandler, managerPort, hostName=hostName,
                                         logName=logName)
     managerServer.setHolder(holder)
     managerServer.start()

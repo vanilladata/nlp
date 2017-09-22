@@ -257,8 +257,6 @@ class CRFHttpHandler(BaseHTTPRequestHandler):
     # 分词接口
     def posttestSeg(self):
         reqData = self.requestJsonData
-        if None == segmentUtils.logger:
-            segmentUtils.logger = self.inner_logger
 
         if u"text" in reqData:
             text = reqData[u"text"]
