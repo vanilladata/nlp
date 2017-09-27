@@ -56,6 +56,12 @@ class JieBaSegment:
         # 加载停用次词典
         ExeContext.loadStopWord(dictDir, JieBaSegment.stopWords)
 
+        JieBaSegment.stopWords.add("\r\n")
+        JieBaSegment.stopWords.add("\n")
+        JieBaSegment.stopWords.add("\t")
+        JieBaSegment.stopWords.add(" ")
+
+
     @staticmethod
     def segmentByDefault(text):
         dictDir = ExeContext.context["dictDir"]
